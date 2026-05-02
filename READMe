@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rakshi Birthday 💖</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background-size: 400% 400%;
+            animation: bg 12s infinite alternate;
+            overflow: hidden;
+            color: white;
+            height: 100vh;
+        }
+        @keyframes bg { 0% { background-position: 0% 50% } 100% { background-position: 100% 50% } }
+        #welcome {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: #fff0f6;
+            z-index: 1000;
+            color: #ff4da6;
+        }
+        #name {
+            font-size: 32px;
+            font-weight: bold;
+            opacity: 0;
+            transform: scale(.5);
+            animation: fadeIn 2s forwards;
+        }
+        #countdown { font-size: 28px; margin-top: 15px; color: #ff69b4; }
+        @keyframes fadeIn { to { opacity: 1; transform: scale(1.2) } }
+        #main { display: none; padding: 20px; position: relative; z-index: 1; }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.2);
+            max-width: 400px;
+            margin: 50px auto;
+            color: #333;
+        }
+        .slide {
+            width: 140px;
+            height: 140px;
+            border-radius: 20px;
+            border: 5px solid #ff69b4;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(255,105,180,.6);
+            position: absolute;
+            left: 0; top: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .message { font-size: 16px; margin-top: 15px; white-space: pre-line; color: #444; font-weight: 500; min-height: 100px; }
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #ff69b4, #ff85c1);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.1); }
+        .heart { position: absolute; font-size: 18px; animation: float 6s linear infinite; z-index: 0; pointer-events: none; }
+        @keyframes float { 0% { transform: translateY(100vh); opacity: 1; } 100% { transform: translateY(-10vh); opacity: 0; } }
+        .sparkle { position: absolute; width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: twinkle 1.2s infinite alternate; pointer-events: none; }
+        @keyframes twinkle { from { opacity: .3; transform: scale(.8) } to { opacity: 1; transform: scale(1.3) } }
+        #envelope {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 280px;
+            height: 180px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 200;
+            color: #333;
+        }
+        #envelope.open-ui { transform: translate(-50%, -50%) scale(1); }
+        .glowText { animation: heartbeatGlow 1.5s infinite; }
+        @keyframes heartbeatGlow { 
+            0%, 100% { text-shadow: 0 0 8px #ff69b4; } 
+            50% { text-shadow: 0 0 20px #ff1493, 0 0 30px #ff69b4; } 
+        }
+        #finalScreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: black;
+            z-index: 500;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        #finalBg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+<audio id="heartbeat" src="https://www.soundjay.com/human/heartbeat-01.mp3" preload="auto"></audio>
+
+<div id="welcome">
+    <div id="name">Rakshi 💖</div>
+    <div id="countdown">3</div>
+    <div style="margin-top:10px">Your surprise is loading 🎁</div>
+</div>
+
+<div id="envelope">
+    <div style="font-size: 20px; margin-bottom: 10px;">💌 A Special Letter</div>
+    <button onclick="openLetter()">Open</button>
+</div>
+<div id="main">
+    <div class="card">
+        <h2 style="color: #ff4da6;">Happy Birthday My Doll 🎂🎀</h2>
+        <div id="slideshow-container" style="position:relative; width:140px; height:140px; margin:auto;">
+            <img class="slide" src="https://i.ibb.co/7tvybvcW/IMG-20260405-WA0022.jpg" style="opacity: 1;">
+            <img class="slide" src="https://i.ibb.co/WW19gkX2/Snapchat-539060729.jpg" style="opacity: 0;">
+        </div>
+        <div class="message" id="typedText"></div>
+        <button id="revealBtn" onclick="showEnvelope()">Tap to Reveal 🎁</button>
+        <h3 id="msg" style="color: #ff1493; margin-top: 15px;"></h3>
+    </div>
+</div>
+
+<div id="finalScreen">
+    <div id="finalBg"></div>
+    <div style="position:relative; z-index: 550; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 20px; backdrop-filter: blur(4px); margin: 20px;">
+        <h1 class="glowText" style="font-size:32px;">For You 💖</h1>
+        <p style="font-size:18px; line-height: 1.6;">
+            No matter what happens… 🤍<br>
+            I’ll always be there for you 🫂<br><br>
+            You are my happiness, my comfort, my everything 💕<br><br>
+            Once again Happy Birthday my doll 🎂🎀<br>
+            Stay happy forever ✨
+        </p>
+        <div id="nameFinal" style="margin-top:20px; font-size:26px; font-weight: bold; color: #ff69b4;">
+            💖 DOLL & PUNA 💖
+        </div>
+    </div>
+</div>
+
+<script>
+    const images = [
+        'https://i.ibb.co/7tvybvcW/IMG-20260405-WA0022.jpg',
+        'https://i.ibb.co/WW19gkX2/Snapchat-539060729.jpg'
+    ];
+    const messageText = `You are the most kind, soft-hearted and caring person 💖\n\nBIG SORRY 🤍 for misunderstandings 🥺\nBIG THANKS 🤍 for everything 💕\n\nI luv u so much 🫂🤍\n\nEvil eyes away 🧿🍋🌶\nWe will create more memories 📸💫\n\nStay happy always ✨`;
+
+    // 1. Countdown Logic
+    let count = 3;
+    let inter = setInterval(() => {
+        count--;
+        document.getElementById('countdown').innerText = count;
+        if (count <= 0) {
+            clearInterval(inter);
+            document.getElementById('welcome').style.display = 'none';
+            document.getElementById('main').style.display = 'block';
+            startTyping();
+        }
+    }, 1000);
+
+    // 2. Typing Effect
+    let idx = 0;
+    let isTyping = false;
+    function startTyping() {
+        if (isTyping) return;
+        isTyping = true;
+        const speed = 50;
+        const target = document.getElementById('typedText');
+        function type() {
+            if (idx < messageText.length) {
+                target.innerHTML += messageText[idx] === '\n' ? '<br>' : messageText[idx];
+                idx++;
+                setTimeout(type, speed);
+            }
+        }
+        type();
+    }
+    // 3. Ambient Hearts
+    setInterval(() => {
+        let h = document.createElement('div');
+        h.className = 'heart';
+        h.innerHTML = '💖';
+        h.style.left = Math.random() * 100 + 'vw';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 6000);
+    }, 500);
+
+    // 4. Interaction Functions
+    function showEnvelope() {
+        document.getElementById('envelope').classList.add('open-ui');
+        document.getElementById('revealBtn').style.display = 'none';
+    }
+
+    function openLetter() {
+        const audio = document.getElementById('heartbeat');
+        audio.play().catch(e => console.log("Audio play blocked until click"));
+
+        document.getElementById('envelope').style.display = 'none';
+        document.getElementById('msg').innerHTML = '🎉 Surprise!!! Happy Birthday My Doll 💖✨';
+        
+        launchFireworks();
+        heartExplosion();
+        startSlideshow();
+        showNameHearts();
+        
+        setTimeout(showFinalScreen, 4500);
+    }
+
+    function startSlideshow() {
+        let slides = document.querySelectorAll('.slide');
+        let current = 0;
+        setInterval(() => {
+            slides[current].style.opacity = 0;
+            current = (current + 1) % slides.length;
+            slides[current].style.opacity = 1;
+        }, 2000);
+    }
+
+    function launchFireworks() {
+        for (let i = 0; i < 50; i++) {
+            let f = document.createElement('div');
+            f.style.position = 'fixed';
+            f.style.width = '6px';
+            f.style.height = '6px';
+            f.style.borderRadius = '50%';
+            f.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+            f.style.left = Math.random() * 100 + 'vw';
+            f.style.top = Math.random() * 100 + 'vh';
+            f.style.zIndex = '1000';
+            f.style.transition = 'all 1s ease-out';
+            document.body.appendChild(f);
+            setTimeout(() => {
+                f.style.transform = 'scale(6)';
+                f.style.opacity = 0;
+            }, 10);
+            setTimeout(() => f.remove(), 1200);
+        }
+    }
+
+    function heartExplosion() {
+        for (let i = 0; i < 40; i++) {
+            let h = document.createElement('div');
+            h.innerHTML = '💖';
+            h.style.position = 'fixed';
+            h.style.left = '50%';
+            h.style.top = '50%';
+            h.style.zIndex = '1000';
+            document.body.appendChild(h);
+            let a = Math.random() * 2 * Math.PI;
+            let d = 100 + Math.random() * 200;
+            setTimeout(() => {
+                h.style.transition = 'all 1.5s ease-out';
+                h.style.transform = `translate(${Math.cos(a) * d}px, ${Math.sin(a) * d}px) scale(2)`;
+                h.style.opacity = 0;
+            }, 10);
+            setTimeout(() => h.remove(), 1600);
+        }
+    }
+
+    function showNameHearts() {
+        const text = "RAKSHI";
+        const container = document.createElement('div');
+        container.style.cssText = `position:fixed; left:50%; top:40%; transform:translate(-50%,-50%); z-index:1000; white-space:nowrap;`;
+        document.body.appendChild(container);
+
+        for (let i = 0; i < text.length; i++) {
+            let span = document.createElement('span');
+            span.innerText = text[i];
+            span.style.cssText = `display:inline-block; margin:0 5px; font-size:45px; font-weight:bold; color:#ff4da6; text-shadow: 0 0 15px white;`;
+            container.appendChild(span);
+        }
+        setTimeout(() => container.remove(), 3500);
+    }
+
+    function showFinalScreen() {
+        const final = document.getElementById('finalScreen');
+        const bg = document.getElementById('finalBg');
+        final.style.display = 'flex';
+        
+        let imgIdx = 0;
+        function rotateBg() {
+            bg.style.opacity = 0;
+            setTimeout(() => {
+                bg.style.backgroundImage = `url(${images[imgIdx]})`;
+                bg.style.opacity = 0.5;
+                imgIdx = (imgIdx + 1) % images.length;
+            }, 1000);
+        }
+        rotateBg();
+        setInterval(rotateBg, 4000);
+    }
+
+    // Sparkles initialization
+    for (let i = 0; i < 30; i++) {
+        let s = document.createElement('div');
+        s.className = 'sparkle';
+        s.style.left = Math.random() * 100 + 'vw';
+        s.style.top = Math.random() * 100 + 'vh';
+        s.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(s);
+    }
+</script>
+</body>
+</html>
